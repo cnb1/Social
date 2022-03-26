@@ -6,7 +6,7 @@ const { argsToArgsConfig } = require('graphql/type/definition');
 
 module.exports = {
     Query: {
-        async getPosts() {
+        async getPosts() { 
             try {
                 const posts = await Post.find().sort({ createdAt: -1});
                 return posts;
