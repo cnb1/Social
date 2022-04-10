@@ -13,7 +13,6 @@ import { Container } from 'semantic-ui-react';
 function App() {
   return (
      <Router>
-      
       <Container>
         <MenuBar/>
         <Routes>
