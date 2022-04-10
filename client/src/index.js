@@ -1,6 +1,7 @@
 import ReactDOM from 'react-dom';
 import reportWebVitals from './reportWebVitals';
 import ApolloProvider from './ApolloProvider';
+import 'semantic-ui-css/semantic.min.css';
 
 ReactDOM.render(
   ApolloProvider,
