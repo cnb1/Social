@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import 'semantic-ui-css/semantic.min.css';
 import './App.css';
 
+import { AuthProvider } from './context/auth';
+
 import MenuBar from './components/MenuBar';
 import Home from './pages/Home';
 import Register from './pages/Register';
@@ -12,17 +14,19 @@ import { Container } from 'semantic-ui-react';
 
 function App() {
   return (
-    <Router>
-      <Container>
-        <MenuBar />
-        <Routes>
-          <Route exact path="/" element={<Home />} />
-          <Route exact path="/login" element={<Login />} />
-          <Route exact path="/register" element={<Register />} />
-        </Routes>
-      </Container>
+    <AuthProvider>
+      <Router>
+        <Container>
+          <MenuBar />
+          <Routes>
+            <Route exact path="/" element={<Home />} />
+            <Route exact path="/login" element={<Login />} />
+            <Route exact path="/register" element={<Register />} />
+          </Routes>
+        </Container>
 
-    </Router>
+      </Router>
+    </AuthProvider>
   );
 }
 
