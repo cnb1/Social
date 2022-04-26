@@ -12,16 +12,16 @@ import { Container } from 'semantic-ui-react';
 
 function App() {
   return (
-     <Router>
+    <Router>
       <Container>
-        <MenuBar/>
+        <MenuBar />
         <Routes>
-          <Route exact path='/' element={<Home/>} />
-          <Route exact path='/login' element = {<Login/>}/>
-          <Route exact path='/register' element = {<Register/>}/>
+          <Route exact path="/" element={<Home />} />
+          <Route exact path="/login" element={<Login />} />
+          <Route exact path="/register" element={<Register />} />
         </Routes>
       </Container>
-      
+
     </Router>
   );
 }
