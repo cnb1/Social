@@ -1,9 +1,10 @@
-import React from 'react';
+import React, {Fragment} from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import 'semantic-ui-css/semantic.min.css';
 import './App.css';
 
 import { AuthProvider } from './context/auth';
+import  AuthRoute from './util/AuthRoute'; 
 
 import MenuBar from './components/MenuBar';
 import Home from './pages/Home';
@@ -20,8 +21,12 @@ function App() {
           <MenuBar />
           <Routes>
             <Route exact path="/" element={<Home />} />
-            <Route exact path="/login" element={<Login />} />
-            <Route exact path="/register" element={<Register />} />
+            <Route exact path="/login" element={<AuthRoute />}>
+              <Route exact path='/login' element={<Login/>}/>
+            </Route>
+            <Route exact path="/register" element={<AuthRoute />}>
+              <Route exact path='register' element={<Register/>}/>
+            </Route>
           </Routes>
         </Container>
 
