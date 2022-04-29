@@ -25,7 +25,7 @@ function App() {
               <Route exact path='/login' element={<Login/>}/>
             </Route>
             <Route exact path="/register" element={<AuthRoute />}>
-              <Route exact path='register' element={<Register/>}/>
+              <Route exact path='/register' element={<Register/>}/>
             </Route>
           </Routes>
         </Container>
