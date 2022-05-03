@@ -8,9 +8,12 @@ import LikeButton from '../components/LikeButton';
 
 import {AuthContext } from '../context/auth';
 import DeleteButton from '../components/DeleteButton';
+import { useNavigate } from 'react-router-dom';
+
 
 function SinglePost() {
     const {postId} = useParams();
+    const navigate = useNavigate();
 
     const {user} = useContext(AuthContext);
 
@@ -25,6 +28,10 @@ function SinglePost() {
           postId
         }
       });
+
+      function deletePostCallback() {
+        navigate('/');
+      };
 
     let postMarkup;
 
@@ -78,10 +85,24 @@ function SinglePost() {
                                     </Button>
 
                                     {user && user.username === username && (
-                                        <DeleteButton postId={id}/>
+                                        <DeleteButton postId={id} callback={deletePostCallback}/>
                                     )}
                             </Card.Content>
                         </Card>
+
+                        {comments.map(comment => (
+                            <Card fluid key={comment.id}>
+                                <Card.Content>
+                                    {user && user.username === comment.username && (
+                                        <DeleteButton postId={id} commentId={comment.id}/>
+                                    )}
+                                    <Card.Header>{comment.username}</Card.Header>
+                                    <Card.Meta>{moment(comment.createdAt).fromNow()}</Card.Meta>
+                                    <Card.Description>{Comment.body}</Card.Description>
+                                </Card.Content>
+                            </Card>
+                        ))}
+
                     </Grid.Column>
                 </Grid.Row>
             </Grid>
