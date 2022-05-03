@@ -1,8 +1,8 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState, useRef} from 'react';
 import { useParams } from 'react-router-dom';
 import gql from 'graphql-tag';
-import { useQuery } from '@apollo/client';
-import { Button, Card, Grid, Icon, Image, Label } from 'semantic-ui-react';
+import { useQuery, useMutation } from '@apollo/client';
+import { Button, Card, Form, Grid, Icon, Image, Label } from 'semantic-ui-react';
 import moment from 'moment';
 import LikeButton from '../components/LikeButton';
 
@@ -14,10 +14,12 @@ import { useNavigate } from 'react-router-dom';
 function SinglePost() {
     const {postId} = useParams();
     const navigate = useNavigate();
+    const commentInputRef = useRef(null);
 
     const {user} = useContext(AuthContext);
-
     console.log(postId);
+
+    const [comment, setComment] = useState('');
     
     const{
         loading,
@@ -28,6 +30,18 @@ function SinglePost() {
           postId
         }
       });
+
+
+      const [submitComment] = useMutation(SUBMIT_COMMENT_MUTATION, {
+          update(){
+            setComment('');
+            commentInputRef.current.blur();
+          },
+          variables: {
+              postId,
+              body: comment
+          }
+      })
 
       function deletePostCallback() {
         navigate('/');
@@ -90,6 +104,36 @@ function SinglePost() {
                             </Card.Content>
                         </Card>
 
+                        {
+                            user && (
+                                <Card fluid>
+                                    <Card.Content>
+                                    <p>
+                                        Post a Comment
+                                    </p>
+                                    <Form>
+                                        <div className='ui action input fluid'>
+                                            <input
+                                                type='text'
+                                                placeholder='Comment...'
+                                                name='comment'
+                                                value={comment}
+                                                onChange={event => setComment(event.target.value)}
+                                                ref={commentInputRef}
+                                            />
+                                            <button type='submit'
+                                                className='ui button teal'
+                                                disabled={comment.trim() === ''}
+                                                onClick={submitComment}>
+                                                    Submit
+                                            </button>
+                                        </div>
+                                    </Form>
+                                    </Card.Content>
+                                </Card>
+                            )
+                        }
+
                         {comments.map(comment => (
                             <Card fluid key={comment.id}>
                                 <Card.Content>
@@ -98,7 +142,7 @@ function SinglePost() {
                                     )}
                                     <Card.Header>{comment.username}</Card.Header>
                                     <Card.Meta>{moment(comment.createdAt).fromNow()}</Card.Meta>
-                                    <Card.Description>{Comment.body}</Card.Description>
+                                    <Card.Description>{comment.body}</Card.Description>
                                 </Card.Content>
                             </Card>
                         ))}
@@ -111,6 +155,21 @@ function SinglePost() {
 
     return postMarkup;
 }
+// post id should be ID! in the typdefs
+const SUBMIT_COMMENT_MUTATION = gql`
+    mutation($postId: String!, $body: String!) {
+        createComment(postId: $postId, body: $body){
+            id
+            comments{
+                id
+                body
+                createdAt
+                username
+            }
+            commentCount
+        }
+    }
+`
 
 const FETCH_POST_QUERY = gql`
   query getPost($postId: ID!) {
