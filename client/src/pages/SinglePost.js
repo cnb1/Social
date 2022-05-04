@@ -1,4 +1,4 @@
-import React, {useContext, useState, useRef} from 'react';
+import React, { useContext, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import gql from 'graphql-tag';
 import { useQuery, useMutation } from '@apollo/client';
@@ -6,46 +6,47 @@ import { Button, Card, Form, Grid, Icon, Image, Label } from 'semantic-ui-react'
 import moment from 'moment';
 import LikeButton from '../components/LikeButton';
 
-import {AuthContext } from '../context/auth';
+import { AuthContext } from '../context/auth';
 import DeleteButton from '../components/DeleteButton';
 import { useNavigate } from 'react-router-dom';
+import MyPopup from '../util/MyPopup';
 
 
 function SinglePost() {
-    const {postId} = useParams();
+    const { postId } = useParams();
     const navigate = useNavigate();
     const commentInputRef = useRef(null);
 
-    const {user} = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
     console.log(postId);
 
     const [comment, setComment] = useState('');
-    
-    const{
+
+    const {
         loading,
         error,
-        data: {getPost}={}
-      } = useQuery(FETCH_POST_QUERY, {
+        data: { getPost } = {}
+    } = useQuery(FETCH_POST_QUERY, {
         variables: {
-          postId
+            postId
         }
-      });
+    });
 
 
-      const [submitComment] = useMutation(SUBMIT_COMMENT_MUTATION, {
-          update(){
+    const [submitComment] = useMutation(SUBMIT_COMMENT_MUTATION, {
+        update() {
             setComment('');
             commentInputRef.current.blur();
-          },
-          variables: {
-              postId,
-              body: comment
-          }
-      })
+        },
+        variables: {
+            postId,
+            body: comment
+        }
+    })
 
-      function deletePostCallback() {
+    function deletePostCallback() {
         navigate('/');
-      };
+    };
 
     let postMarkup;
 
@@ -69,9 +70,9 @@ function SinglePost() {
                 <Grid.Row>
                     <Grid.Column width={2}>
                         <Image
-                        src='https://react.semantic-ui.com/images/avatar/large/molly.png'
-                        size='small'
-                        float='right'/>
+                            src='https://react.semantic-ui.com/images/avatar/large/molly.png'
+                            size='small'
+                            float='right' />
                     </Grid.Column>
 
                     <Grid.Column width={10}>
@@ -82,25 +83,31 @@ function SinglePost() {
                                 <Card.Description>{body}</Card.Description>
                             </Card.Content>
 
-                            <hr/>
+                            <hr />
                             <Card.Content extra>
-                                <LikeButton user={user} post={{id, likeCount, likes}}/>
-                                <Button
-                                    as="div"
-                                    labelPosition='right'
-                                    onClick={() => console.log('Comment on post')}
+                                <LikeButton user={user} post={{ id, likeCount, likes }} />
+                                <MyPopup
+                                    content='Comment on post'
+                                >
+
+                                    <Button
+                                        as="div"
+                                        labelPosition='right'
+                                        onClick={() => console.log('Comment on post')}
                                     >
                                         <Button basic color='blue'>
-                                            <Icon name='comments'/>
+                                            <Icon name='comments' />
                                         </Button>
                                         <Label basic color='blue' pointing='left'>
                                             {commentCount}
                                         </Label>
                                     </Button>
 
-                                    {user && user.username === username && (
-                                        <DeleteButton postId={id} callback={deletePostCallback}/>
-                                    )}
+                                </MyPopup>
+
+                                {user && user.username === username && (
+                                    <DeleteButton postId={id} callback={deletePostCallback} />
+                                )}
                             </Card.Content>
                         </Card>
 
@@ -108,27 +115,27 @@ function SinglePost() {
                             user && (
                                 <Card fluid>
                                     <Card.Content>
-                                    <p>
-                                        Post a Comment
-                                    </p>
-                                    <Form>
-                                        <div className='ui action input fluid'>
-                                            <input
-                                                type='text'
-                                                placeholder='Comment...'
-                                                name='comment'
-                                                value={comment}
-                                                onChange={event => setComment(event.target.value)}
-                                                ref={commentInputRef}
-                                            />
-                                            <button type='submit'
-                                                className='ui button teal'
-                                                disabled={comment.trim() === ''}
-                                                onClick={submitComment}>
+                                        <p>
+                                            Post a Comment
+                                        </p>
+                                        <Form>
+                                            <div className='ui action input fluid'>
+                                                <input
+                                                    type='text'
+                                                    placeholder='Comment...'
+                                                    name='comment'
+                                                    value={comment}
+                                                    onChange={event => setComment(event.target.value)}
+                                                    ref={commentInputRef}
+                                                />
+                                                <button type='submit'
+                                                    className='ui button teal'
+                                                    disabled={comment.trim() === ''}
+                                                    onClick={submitComment}>
                                                     Submit
-                                            </button>
-                                        </div>
-                                    </Form>
+                                                </button>
+                                            </div>
+                                        </Form>
                                     </Card.Content>
                                 </Card>
                             )
@@ -138,7 +145,7 @@ function SinglePost() {
                             <Card fluid key={comment.id}>
                                 <Card.Content>
                                     {user && user.username === comment.username && (
-                                        <DeleteButton postId={id} commentId={comment.id}/>
+                                        <DeleteButton postId={id} commentId={comment.id} />
                                     )}
                                     <Card.Header>{comment.username}</Card.Header>
                                     <Card.Meta>{moment(comment.createdAt).fromNow()}</Card.Meta>
